@@ -1,0 +1,53 @@
+﻿CSA Summary
+
+
+Strange Game: Numbers acted as a magic square to play the TicTacToe game. Took a magic square example and started playing.
+
+
+Moses:  Decrypted the morse code message and found out she sent a message without spaces that matches sentences from the book. Removed all special characters from the book and created a list with all of the valid english words. Created a loop that iterates word by word and combines them. if the encrypted data is bigger and not the same continue adding words, else check if encrypted data is equal to the current sentence.
+
+
+README: Found out the flag was {hey_that_is_the_great_puzzle} and saw also that the text was replaced with leet speak. So I created a dictionary that matches letters to their leet speak letters. After that I brute forced the check_key function with all of the leet speak possibilities.
+
+
+Pass It On: Executable file that asks the user for a password. By the title of the challenge I assumed that the attack we need to implement is called timing attack/side channel attack (long password verification time). Opened the exe in IDA pro to find the password length. After we found the length I created a script that calculated the time every char took us to respond so we can extract the chars that took us the longest.
+
+
+Memento: In memento we see a memory card game. In the server file the game randomly chooses a card between 1 - 20 and then calculates the distance. If the flag[game_level] % 9 + 1 is equal to the distance we got from the last calculation it returns 1 else 0. So we can build 9 boards which contain distances from 1 to 9 and check when it returns 1 at every game level. After we got our every game level distance we can compare the calculation to every char in the alphabet. If the char is equal to the game level distance then it might be the char in the flag. Then we got a list that contains a couple of chars to each possible word. Now we just need to build the words that make sense and that is the flag.
+
+
+Beat The Map: First we get 3 pictures and we have 3 challenges. In the first challenge we open both picture 1 and picture 2, We run on both of the pictures and if in picture1 the current byte is 1 add the current picture 2 byte to the file header result else add the 0 byte. In the second challenge we run on picture 2 bytes and if the byte is odd we add \xff else we add \x00 to the new file header variable. In the third challenge I built a list that holds all triangular values until the p3 length minus the file header length. After that I iterate over picture3 bytes in the triangular series indexes and lsbit them. The last thing I do is turn every 8 bits to char and then add them to a string.
+
+
+Puzzword: First I wrote a couple of functions to communicate with the rest api. After that I got a python backtracking peg solitaire script and implemented it in my script. Every letter of the result string is the letter in the flag. We use a backtracking algorithm because we want to get every possible solution on the board so we can compare it to the desired board.
+
+
+D3c0d3M3: base32 -> xor CC55AA -> ROT13
+
+
+cq_cq_cq: We found out that 18 is mister phillips and cq is all agents, so we can compare the prefix to the encrypted prefix. After wandering around we found a cipher called phillips cipher. Cipher that works with 8 grids and a key. Every 5 char encrypted, the first row goes down. So I reversed the grids and cracked the code
+
+
+ls: First we figured out that we need to create two files with different md5 values, also called md5 collision attack. After reading a github repository we found out we can create a zip file that holds 2 files but only extract one file. You can change the file by switching the bytes from 06 86 to 86 06. The third part is to use something called identical prefix attack which takes a single argument and gives two different files data with the same md5 hash. Basically we need to pad 2 blocks of data so that at the end we will get the different files from the zips but with the same md5 hash. First prefix with 06, the second time we will add the prefix 86 and switch the 86 prefix and data block with the second file.
+
+
+Computed Shopping Assistant: When you try to apply a coupon first it loads all the available coupons in the grocery list, and hides them in the list. When you apply the right coupon it goes to the coupon.have_entered and changes it to True. Because coupon_item and grocery_item are stored on the same memory location changing kilograms will also act as changing the have_entered.
+So now we have 3 things we need to handle, first is to apply a fake coupon so the coupons will load into the list, second we need to change the coupon index kg to 1 instead of 0 so when we turn the coupon index to type coupon again it will act as the coupon have entered, and third is to change back the type to coupon.
+Apply Coupon -> Change ItemIndex 1 KG to 1 -> Change itemIndex 1 Item to 0 -> Edit ItemIndex 1 -> View Coupons
+
+
+Computed Shopping Assistant 2: Same as 1 but now we can abuse the length value of the coupon. Because the comparison is based on the length of the coupon, if we start from coupon size 1 and increase it at a time we can extract every char of the coupon.
+
+
+Fun With Flags: In this challenge we need to overcome 2 problems. First is to get enough money to buy the flag and second is to be a star member. First we abuse the sell function. By selling one flag the flag price is still stored in the local variable and by inputting an incorrect flag index to sell, it repeats selling the flag we already sold because the variable was never cleaned. After we gain enough money we need to sell the rest of the flag and buy the Russian flag. After that we will try to look at the stats but get an error and then we can buy the CSA flag.
+
+
+Slot Machine Reloaded: Python random has a security issue in his mersenne twister random, after 624 random numbers you can predict what comes. After 200 spins every flag letter is moved to be the first letter in their slot. So after 200 spins we can take the results, feed the cracker and check what the cracker predicts to be the next result. if there is 0 in the result we know that the letter in the index of the 0 is the flag char at the same index. So first we get 200 results, turn them into the char indexes int, then we convert them to binary of 6 bits. After that every 192 bits we reverse all 32 bits (1 2 3 4 5 6 -> 6 5 4 3 2 1). Now we need to convert all the list of the 32 bits values to int because the cracker takes int as an input. Now we need to feed the cracker exactly 624 times (because we have 1200 values of 32 bits we start from 576).
+Lastly, we predict what number to come and get the result from the spin. if there is a 0 in the number that the cracker predicted, the index of the 0 in the result spin is the flag char at that index.
+
+
+Endgame: Every 2 Bytes is an operation you need to do.
+1A - 1F are acting as registers and the following bytes is the new value.
+AB/BA/CD/DC is opcodes and the following bytes are the variables.
+1A 03 = a register is now 3 | ab ca = add c,a
+Finally we take the a register and decode it from hex to ascii
